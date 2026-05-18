@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Uniform Billing System - Tailor & Distributor</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body>
+  <div id="app">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h2>👔 Uniform Billing</h2>
+      </div>
+      <nav class="sidebar-nav">
+        <button class="nav-btn active" data-page="home">
+          <span class="nav-icon">🏠</span> Home
+        </button>
+        <button class="nav-btn" data-page="schools">
+          <span class="nav-icon">🏫</span> Manage Schools
+        </button>
+        <button class="nav-btn" data-page="orders">
+          <span class="nav-icon">📋</span> Orders
+        </button>
+      </nav>
+      <div class="sidebar-footer">
+        <p>Uniform Tailor & Distributor</p>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content" id="mainContent">
+
+      <!-- ===== HOME PAGE ===== -->
+      <section class="page active" id="page-home">
+        <div class="welcome-section">
+          <h1>Welcome, Tailor! 👋</h1>
+          <p>Select a school to create a billing order</p>
+        </div>
+        <div class="school-grid" id="homeSchoolGrid">
+          <!-- Dynamically loaded -->
+        </div>
+        <div class="empty-state" id="homeEmptyState" style="display:none;">
+          <div class="empty-icon">🏫</div>
+          <h3>No Schools Added Yet</h3>
+          <p>Go to Manage Schools to add your first school.</p>
+        </div>
+      </section>
+
+      <!-- ===== SCHOOLS MANAGEMENT PAGE ===== -->
+      <section class="page" id="page-schools">
+        <div class="page-header">
+          <h1>Manage Schools</h1>
+          <button class="btn btn-primary" id="addSchoolBtn">+ Add School</button>
+        </div>
+
+        <!-- School List -->
+        <div id="schoolList">
+          <!-- Dynamically loaded -->
+        </div>
+        <div class="empty-state" id="schoolEmptyState" style="display:none;">
+          <div class="empty-icon">🏫</div>
+          <h3>No Schools</h3>
+          <p>Click "Add School" to get started.</p>
+        </div>
+      </section>
+
+      <!-- ===== SINGLE SCHOOL DETAIL (Uniforms & Cart) ===== -->
+      <section class="page" id="page-school-detail">
+        <div class="page-header">
+          <button class="btn btn-back" id="backFromDetail">← Back</button>
+          <h1 id="schoolDetailTitle">School Name</h1>
+          <button class="btn btn-secondary" id="addUniformBtn">+ Add Uniform</button>
+        </div>
+
+        <div class="detail-layout">
+          <!-- Uniforms List -->
+          <div class="detail-section uniforms-section">
+            <h2>Available Uniforms</h2>
+            <div id="uniformsList">
+              <!-- Dynamically loaded -->
+            </div>
+            <div class="empty-state" id="uniformEmptyState" style="display:none;">
+              <div class="empty-icon">👕</div>
+              <h3>No Uniforms Added</h3>
+              <p>Click "Add Uniform" to add uniforms for this school.</p>
+            </div>
+          </div>
+
+          <!-- Cart Section -->
+          <div class="detail-section cart-section">
+            <h2>Cart <span id="cartCount" class="badge">0</span></h2>
+            <div id="cartList">
+              <!-- Dynamically loaded -->
+            </div>
+            <div class="empty-state" id="cartEmptyState">
+              <div class="empty-icon">🛒</div>
+              <h3>Cart is Empty</h3>
+              <p>Add uniforms from the left panel.</p>
+            </div>
+            <div class="cart-summary" id="cartSummary" style="display:none;">
+              <div class="cart-total">
+                <span>Total:</span>
+                <span id="cartTotalAmount">₹0.00</span>
+              </div>
+              <button class="btn btn-success" id="proceedToBillBtn">Proceed to Bill →</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== BILLING PAGE ===== -->
+      <section class="page" id="page-billing">
+        <div class="page-header">
+          <button class="btn btn-back" id="backFromBilling">← Back to Cart</button>
+          <h1>Billing</h1>
+        </div>
+
+        <div class="billing-layout">
+          <div class="billing-form-section">
+            <h2>Student Details</h2>
+            <form id="billingForm">
+              <div class="form-group">
+                <label for="studentName">Student Name *</label>
+                <input type="text" id="studentName" required placeholder="Enter student name">
+              </div>
+              <div class="form-group">
+                <label for="studentClass">Class / Grade *</label>
+                <input type="text" id="studentClass" required placeholder="e.g. 10A">
+              </div>
+              <div class="form-group">
+                <label for="parentContact">Parent Contact *</label>
+                <input type="tel" id="parentContact" required placeholder="Enter phone number">
+              </div>
+              <div class="form-group">
+                <label for="billingDate">Date</label>
+                <input type="date" id="billingDate">
+              </div>
+              <div class="form-group">
+                <label for="additionalNote">Note (optional)</label>
+                <textarea id="additionalNote" placeholder="Any additional notes..."></textarea>
+              </div>
+            </form>
+
+            <h2 style="margin-top:20px;">Order Summary</h2>
+            <div id="billingOrderSummary">
+              <!-- Dynamically loaded -->
+            </div>
+            <div class="billing-total">
+              <strong>Grand Total:</strong>
+              <span id="billingGrandTotal">₹0.00</span>
+            </div>
+          </div>
+
+          <div class="billing-actions-section">
+            <button class="btn btn-success btn-large" id="generatePdfBtn">
+              📄 Generate PDF / Print
+            </button>
+            <button class="btn btn-primary btn-large" id="saveOrderBtn">
+              💾 Save Order
+            </button>
+            <p class="billing-hint">Save order to keep a record. Generate PDF to print or save as PDF.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== ORDERS PAGE ===== -->
+      <section class="page" id="page-orders">
+        <div class="page-header">
+          <h1>All Orders</h1>
+          <button class="btn btn-danger" id="clearAllOrdersBtn">Clear All</button>
+        </div>
+
+        <div class="orders-filters">
+          <input type="text" id="orderSearch" placeholder="Search by student name, school, or contact...">
+        </div>
+
+        <div id="ordersList">
+          <!-- Dynamically loaded -->
+        </div>
+        <div class="empty-state" id="ordersEmptyState" style="display:none;">
+          <div class="empty-icon">📋</div>
+          <h3>No Orders Yet</h3>
+          <p>Orders will appear here once you save them from billing.</p>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Modals -->
+  <div class="modal-overlay" id="modalOverlay" style="display:none;">
+    <div class="modal" id="modalContent">
+      <div class="modal-header">
+        <h3 id="modalTitle">Modal Title</h3>
+        <button class="modal-close" id="modalCloseBtn">&times;</button>
+      </div>
+      <div class="modal-body" id="modalBody">
+        <!-- Dynamic content -->
+      </div>
+      <div class="modal-footer" id="modalFooter">
+        <button class="btn btn-secondary" id="modalCancelBtn">Cancel</button>
+        <button class="btn btn-primary" id="modalConfirmBtn">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
