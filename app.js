@@ -994,5 +994,33 @@ $('#modalOverlay').addEventListener('click', (e) => {
   }
 });
 
+// ===== MOBILE SIDEBAR TOGGLE =====
+const sidebar = $('#sidebar');
+const overlay = $('#sidebarOverlay');
+const hamburger = $('#hamburgerBtn');
+
+function toggleSidebar() {
+  sidebar.classList.toggle('open');
+  overlay.classList.toggle('active');
+}
+
+function closeSidebar() {
+  sidebar.classList.remove('open');
+  overlay.classList.remove('active');
+}
+
+if (hamburger) {
+  hamburger.addEventListener('click', toggleSidebar);
+}
+
+if (overlay) {
+  overlay.addEventListener('click', closeSidebar);
+}
+
+// Close sidebar on nav click (mobile)
+$$('.nav-btn').forEach(btn => {
+  btn.addEventListener('click', closeSidebar);
+});
+
 // Run on page load
 document.addEventListener('DOMContentLoaded', init);
